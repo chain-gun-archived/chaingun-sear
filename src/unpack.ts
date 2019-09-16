@@ -1,12 +1,4 @@
-import { check, shuffleAttackCutoff } from './settings'
-
-export function parse(val: any) {
-  try {
-    return JSON.parse(val)
-  } catch {
-    return val
-  }
-}
+import { parse, check, shuffleAttackCutoff } from './settings'
 
 export function unpack(value: any, key: string, node: GunNode) {
   if (!value) return
