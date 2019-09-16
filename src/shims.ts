@@ -1,4 +1,5 @@
-export const Buffer = require('./SafeBuffer')
+import SafeBuffer from './SafeBuffer'
+export const Buffer = SafeBuffer
 
 const api: any = {
   Buffer,

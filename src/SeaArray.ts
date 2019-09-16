@@ -1,14 +1,14 @@
 // This is Array extended to have .toString(['utf8'|'hex'|'base64'])
-function SeaArray () {}
+function SeaArray() {}
 Object.assign(SeaArray, { from: Array.from })
 SeaArray.prototype = Object.create(Array.prototype)
-SeaArray.prototype.toString = function (enc, start, end) {
+SeaArray.prototype.toString = function(enc: string, start: number, end: number) {
   enc = enc || 'utf8'
   start = start || 0
   const length = this.length
   if (enc === 'hex') {
     const buf = new Uint8Array(this)
-    return [...Array(((end && end + 1) || length) - start).keys()]
+    return [...(<any>Array(((end && end + 1) || length) - start).keys())]
       .map(i => buf[i + start].toString(16).padStart(2, '0'))
       .join('')
   }
@@ -21,4 +21,5 @@ SeaArray.prototype.toString = function (enc, start, end) {
     return btoa(this)
   }
 }
-module.exports = SeaArray
+
+export default <any>SeaArray
