@@ -33,13 +33,17 @@ Object.assign(SafeBuffer, {
       } else if (enc === 'utf8') {
         const length = input.length
         const words = new Uint16Array(length)
-        Array.from({ length: length }, (_, i) => (words[i] = input.charCodeAt(i)))
+        for (let i = 0; i < length; i++) {
+          words[i] = input.charCodeAt(i)
+        }
         buf = SeaArray.from(words)
       } else if (enc === 'base64') {
         const dec = atob(input)
         const length = dec.length
         const bytes = new Uint8Array(length)
-        Array.from({ length: length }, (_, i) => (bytes[i] = dec.charCodeAt(i)))
+        for (let i = 0; i < length; i++) {
+          bytes[i] = dec.charCodeAt(i)
+        }
         buf = SeaArray.from(bytes)
       } else if (enc === 'binary') {
         buf = SeaArray.from(input)

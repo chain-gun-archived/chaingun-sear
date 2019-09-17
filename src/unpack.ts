@@ -38,11 +38,12 @@ export function unpackNode(node: GunNode) {
   return result
 }
 
-export function unpackGraph(graph: GunGraph) {
-  const unpackedGraph: GunGraph = {}
+export function unpackGraph(graph: GunGraphData) {
+  const unpackedGraph: GunGraphData = {}
   for (let soul in graph) {
     const node = graph[soul]
     unpackedGraph[soul] = node ? unpackNode(node) : node
   }
+
   return unpackedGraph
 }

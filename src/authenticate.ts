@@ -7,7 +7,7 @@ export async function authenticateIdentity(
   chaingun: any,
   soul: string,
   password: string,
-  encoding?: string
+  encoding = 'base64'
 ) {
   const ident = await chaingun.get(soul).then()
   if (!ident || !ident.auth) return
@@ -15,6 +15,7 @@ export async function authenticateIdentity(
   const decrypted: any = await decrypt(ident.auth.ek, proof, {
     encode: encoding
   })
+
   if (!decrypted) return
   return {
     alias: ident.alias as string,

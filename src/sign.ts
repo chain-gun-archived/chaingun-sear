@@ -105,7 +105,7 @@ export async function signNode(
 }
 
 export async function signGraph(
-  graph: GunGraph,
+  graph: GunGraphData,
   pair: { pub: string; priv: string },
   encoding = DEFAULT_OPTS.encode
 ) {
@@ -121,7 +121,7 @@ export async function signGraph(
 }
 
 export function graphSigner(pair: { pub: string; priv: string }, encoding = DEFAULT_OPTS.encode) {
-  return function(graph: GunGraph) {
+  return function(graph: GunGraphData) {
     return signGraph(graph, pair, encoding)
   }
 }

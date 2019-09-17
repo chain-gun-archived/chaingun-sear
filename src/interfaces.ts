@@ -10,7 +10,7 @@ interface GunNode {
   [key: string]: GunValue
 }
 
-interface GunGraph {
+interface GunGraphData {
   [key: string]: GunNode | undefined
 }
 
