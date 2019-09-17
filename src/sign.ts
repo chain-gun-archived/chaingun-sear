@@ -2,6 +2,7 @@ import { parse, check, jwk, ecdsa } from './settings'
 import { sha256 } from './sha256'
 import { subtle, Buffer } from './shims'
 import { verify } from './verify'
+import { pubFromSoul } from './soul'
 
 const DEFAULT_OPTS = {
   encode: 'base64'
@@ -72,4 +73,55 @@ export async function sign(data: string, pair: { pub: string; priv: string }, op
   }
   if (opt.raw) return r
   return 'SEA' + JSON.stringify(r)
+}
+
+export async function signNodeValue(
+  node: GunNode,
+  key: string,
+  pair: { pub: string; priv: string },
+  encoding = DEFAULT_OPTS.encode
+) {
+  const hash = await hashNodeKey(node, key)
+  const sig = await signHash(hash, pair)
+  return {
+    m: parse(node[key]),
+    s: Buffer.from(sig, 'binary').toString(encoding)
+  }
+}
+
+export async function signNode(
+  node: GunNode,
+  pair: { pub: string; priv: string },
+  encoding = DEFAULT_OPTS.encode
+) {
+  const signedNode: GunNode = {
+    _: node._
+  }
+  for (let key in node) {
+    if (key === '_') continue
+    signedNode[key] = JSON.stringify(await signNodeValue(node, key, pair, encoding))
+  }
+  return signedNode
+}
+
+export async function signGraph(
+  graph: GunGraph,
+  pair: { pub: string; priv: string },
+  encoding = DEFAULT_OPTS.encode
+) {
+  const modifiedGraph = { ...graph }
+  for (let soul in graph) {
+    const soulPub = pubFromSoul(soul)
+    if (soulPub !== pair.pub) continue
+    const node = graph[soul]
+    if (!node) continue
+    modifiedGraph[soul] = await signNode(node, pair, encoding)
+  }
+  return modifiedGraph
+}
+
+export function graphSigner(pair: { pub: string; priv: string }, encoding = DEFAULT_OPTS.encode) {
+  return function(graph: GunGraph) {
+    return signGraph(graph, pair, encoding)
+  }
 }
