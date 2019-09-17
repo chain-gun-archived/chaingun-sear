@@ -8,14 +8,20 @@ SeaArray.prototype.toString = function(enc: string, start: number, end: number) 
   const length = this.length
   if (enc === 'hex') {
     const buf = new Uint8Array(this)
-    return [...(<any>Array(((end && end + 1) || length) - start).keys())]
-      .map(i => buf[i + start].toString(16).padStart(2, '0'))
-      .join('')
+    const num = ((end && end + 1) || length) - start
+    let res = ''
+    for (let i = 0; i < num; i++) {
+      res += buf[i + start].toString(16).padStart(2, '0')
+    }
+    return res
   }
   if (enc === 'utf8') {
-    return Array.from({ length: (end || length) - start }, (_, i) =>
-      String.fromCharCode(this[i + start])
-    ).join('')
+    const num = (end || length) - start
+    let res = ''
+    for (let i = 0; i < num; i++) {
+      res += String.fromCharCode(this[i + start])
+    }
+    return res
   }
   if (enc === 'base64') {
     return btoa(this)

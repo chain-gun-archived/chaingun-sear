@@ -20,13 +20,14 @@ export function prep(val: any, key: string, node: GunNode, soul: string) {
   return {
     '#': soul,
     '.': key,
-    ':': val,
+    ':': parse(val),
     '>': node && node._ && node._['>'] && node._['>'][key]
   }
 }
 
-export async function hashForSignature(text: string) {
-  return (await sha256(JSON.stringify(parse(text)))).toString('hex')
+export async function hashForSignature(prepped: any) {
+  const hash = await sha256(JSON.stringify(prepped))
+  return hash.toString('hex')
 }
 
 export function hashNodeKey(node: GunNode, key: string) {
@@ -34,7 +35,7 @@ export function hashNodeKey(node: GunNode, key: string) {
   const parsed = parse(val)
   const soul = node && node._ && node._['#']
   const prepped = prep(parsed, key, node, soul)
-  return hashForSignature(parse(prepped))
+  return hashForSignature(prepped)
 }
 
 export async function signHash(
@@ -44,9 +45,14 @@ export async function signHash(
 ) {
   const { pub, priv } = pair
   const token = jwk(pub, priv)
-  const signKey = subtle.importKey('jwk', token, ecdsa.pair, false, ['sign'])
+  const signKey = await subtle.importKey('jwk', token, ecdsa.pair, false, ['sign'])
   const sig = await subtle.sign(ecdsa.sign, signKey, new Uint8Array(Buffer.from(hash, 'hex')))
-  return Buffer.from(sig, 'binary').toString(encoding)
+  try {
+    const res = Buffer.from(sig, 'binary').toString(encoding)
+    return res
+  } catch (e) {
+    console.error(e.stack || e)
+  }
 }
 
 export async function sign(data: string, pair: { pub: string; priv: string }, opt = DEFAULT_OPTS) {
@@ -69,7 +75,7 @@ export async function sign(data: string, pair: { pub: string; priv: string }, op
   const sig = await signHash(hash, pair, encoding)
   const r = {
     m: json,
-    s: Buffer.from(sig, 'binary').toString(encoding)
+    s: sig
   }
   if (opt.raw) return r
   return 'SEA' + JSON.stringify(r)
@@ -84,8 +90,8 @@ export async function signNodeValue(
   const hash = await hashNodeKey(node, key)
   const sig = await signHash(hash, pair)
   return {
-    m: parse(node[key]),
-    s: Buffer.from(sig, 'binary').toString(encoding)
+    ':': parse(node[key]),
+    '~': sig
   }
 }
 

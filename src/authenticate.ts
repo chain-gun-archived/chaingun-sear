@@ -16,6 +16,8 @@ export async function authenticateIdentity(
     encode: encoding
   })
 
+  console.log('decrypted', decrypted)
+
   if (!decrypted) return
   return {
     alias: ident.alias as string,
