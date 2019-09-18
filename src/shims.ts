@@ -1,11 +1,12 @@
 import SafeBuffer from './SafeBuffer'
+import root from 'window-or-global'
 export const Buffer = SafeBuffer
 
 const api: any = {
   Buffer,
-  crypto: (window && (window.crypto || (window as any).msCrypto)) || {},
-  TextEncoder: window && window.TextEncoder,
-  TextDecoder: window && window.TextDecoder
+  crypto: (root && (root.crypto || root.msCrypto)) || {},
+  TextEncoder: root && root.TextEncoder,
+  TextDecoder: root && root.TextDecoder
 }
 api.subtle = api.crypto && (api.crypto.subtle || api.crypto.webkitSubtle)
 api.random = (len: number) =>
