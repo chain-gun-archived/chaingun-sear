@@ -18,7 +18,7 @@ export async function pair(opt?: any) {
 
   return {
     pub: sa.pub,
-    priv: sa.pub,
+    priv: sa.priv,
     epub: dh.epub,
     epriv: dh.epriv
   }

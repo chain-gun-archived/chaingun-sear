@@ -2,6 +2,7 @@ import { pseudoRandomText } from './pseudoRandomText'
 import { work } from './work'
 import { pair as createPair } from './pair'
 import { encrypt } from './encrypt'
+import { signGraph } from './sign'
 
 export async function createUser(chaingun: any, alias: string, password: string) {
   const aliasSoul = `~@${alias}`
@@ -18,17 +19,40 @@ export async function createUser(chaingun: any, alias: string, password: string)
   const auth = JSON.stringify({ ek, s: salt })
   const data = {
     alias,
-    pub,
     epub,
     auth
   }
 
+  const now = new Date().getTime()
+
+  const graph = await signGraph(
+    {
+      [pubSoul]: {
+        _: {
+          '#': pubSoul,
+          '>': Object.keys(data).reduce(
+            (state, key) => {
+              state[key] = now
+              return state
+            },
+            {} as { [key: string]: number }
+          )
+        },
+        ...data
+      }
+    },
+    { pub, priv }
+  )
+
+  graph[pubSoul]!['pub'] = pub
+  graph[pubSoul]!['_']['>']['pub'] = now
+
   // TODO: clean this up
-  chaingun.get(pubSoul).put(data)
-  chaingun.get(aliasSoul).set({ '#': pubSoul })
+  chaingun.get(aliasSoul).put(graph)
 
   return {
     ...data,
+    pub,
     priv,
     epriv
   }
