@@ -13,7 +13,7 @@ api.random = (len: number) =>
   api.Buffer.from(api.crypto.getRandomValues(new Uint8Array(api.Buffer.alloc(len))))
 
 if (!api.subtle) {
-  const WebCrypto = require('node-webcrypto-ossl')
+  const { Crypto: WebCrypto } = require('@peculiar/webcrypto')
   const { TextEncoder, TextDecoder } = require('text-encoding')
   api.crypto = require('crypto')
   api.TextEncoder = TextEncoder
