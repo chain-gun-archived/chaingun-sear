@@ -16,8 +16,6 @@ export async function authenticateIdentity(
     encode: encoding
   })
 
-  console.log('decrypted', decrypted)
-
   if (!decrypted) return
   return {
     alias: ident.alias as string,
@@ -44,7 +42,11 @@ export async function authenticate(
       pair = await authenticateIdentity(chaingun, soul, password)
     } catch (e) {
       console.warn(e.stack || e)
-      pair = await authenticateIdentity(chaingun, soul, password, 'utf8')
+      try {
+        pair = await authenticateIdentity(chaingun, soul, password, 'utf8')
+      } catch (e) {
+        console.warn(e.stack || e)
+      }
     }
     if (pair) return pair
   }

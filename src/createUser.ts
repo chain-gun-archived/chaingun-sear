@@ -1,4 +1,4 @@
-import { psuedoRandomText } from './psuedoRandomText'
+import { pseudoRandomText } from './pseudoRandomText'
 import { work } from './work'
 import { pair as createPair } from './pair'
 import { encrypt } from './encrypt'
@@ -7,7 +7,7 @@ export async function createUser(chaingun: any, alias: string, password: string)
   const aliasSoul = `~@${alias}`
 
   // "pseudo-randomly create a salt, then use PBKDF2 function to extend the password with it."
-  const salt = psuedoRandomText(64)
+  const salt = pseudoRandomText(64)
   const proof = await work(password, salt)
   const pair = await createPair()
   const { pub, priv, epub, epriv } = pair

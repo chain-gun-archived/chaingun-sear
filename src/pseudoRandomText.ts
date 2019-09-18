@@ -1,4 +1,4 @@
-export function psuedoRandomText(
+export function pseudoRandomText(
   l = 24,
   c = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXZabcdefghijklmnopqrstuvwxyz'
 ) {
