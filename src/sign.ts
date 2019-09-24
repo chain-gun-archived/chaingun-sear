@@ -118,11 +118,9 @@ export async function signGraph(
   const modifiedGraph = { ...graph }
   for (let soul in graph) {
     const soulPub = pubFromSoul(soul)
-    console.log({ soul, soulPub })
     if (soulPub !== pair.pub) continue
     const node = graph[soul]
     if (!node) continue
-    console.log('signNode', { node, pair, encoding })
     modifiedGraph[soul] = await signNode(node, pair, encoding)
   }
   return modifiedGraph

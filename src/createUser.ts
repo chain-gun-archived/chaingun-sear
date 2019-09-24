@@ -15,7 +15,9 @@ export async function createUser(chaingun: any, alias: string, password: string)
   const pubSoul = `~${pub}`
 
   // "to keep the private key safe, we AES encrypt it with the proof of work!"
-  const ek = await encrypt(epriv, proof, { raw: true })
+  const ek = await encrypt(JSON.stringify({ priv, epriv }), proof, {
+    raw: true
+  })
   const auth = JSON.stringify({ ek, s: salt })
   const data = {
     alias,
