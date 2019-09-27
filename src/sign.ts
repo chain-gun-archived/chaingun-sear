@@ -26,7 +26,7 @@ export function prep(val: any, key: string, node: GunNode, soul: string) {
 }
 
 export async function hashForSignature(prepped: any) {
-  const hash = await sha256(JSON.stringify(prepped))
+  const hash = await sha256(typeof prepped === 'string' ? prepped : JSON.stringify(prepped))
   return hash.toString('hex')
 }
 

@@ -1,3 +1,4 @@
+import './base64'
 import SafeBuffer from './SafeBuffer'
 import root from 'window-or-global'
 export const Buffer = SafeBuffer
