@@ -14,9 +14,9 @@ api.random = (len: number) =>
   api.Buffer.from(api.crypto.getRandomValues(new Uint8Array(api.Buffer.alloc(len))))
 
 if (!api.subtle) {
-  const { Crypto: WebCrypto } = require('@peculiar/webcrypto')
-  const { TextEncoder, TextDecoder } = require('text-encoding')
-  api.crypto = require('crypto')
+  const { Crypto: WebCrypto } = eval('require')('@peculiar/webcrypto')
+  const { TextEncoder, TextDecoder } = eval('require')('text-encoding')
+  api.crypto = eval('require')('crypto')
   api.TextEncoder = TextEncoder
   api.TextDecoder = TextDecoder
   api.subtle = new WebCrypto({ directory: 'ossl' }).subtle // ECDH
