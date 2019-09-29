@@ -4,6 +4,7 @@
 // See documentation and validation for safe implementation in:
 // https://github.com/feross/safe-buffer#update
 import SeaArray from './SeaArray'
+import { base64 } from './base64'
 
 function SafeBuffer(...props: any[]) {
   console.warn('new SafeBuffer() is depreciated, please use SafeBuffer.from()')
@@ -38,7 +39,7 @@ Object.assign(SafeBuffer, {
         }
         buf = SeaArray.from(words)
       } else if (enc === 'base64') {
-        const dec = atob(input)
+        const dec = typeof atob !== 'undefined' && atob ? atob(input) : base64.atob(input)
         const length = dec.length
         const bytes = new Uint8Array(length)
         for (let i = 0; i < length; i++) {

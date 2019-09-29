@@ -12,6 +12,7 @@ const DEFAULT_OPTS = {
 
 export async function encrypt(msg: string, key: string, opt = DEFAULT_OPTS) {
   const rand = { s: random(9), iv: random(15) } // consider making this 9 and 15 or 18 or 12 to reduce == padding.
+
   const ct = await subtle.encrypt(
     {
       name: opt.name || DEFAULT_OPTS.name,

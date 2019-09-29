@@ -1,3 +1,5 @@
+import { base64 } from './base64'
+
 // This is Array extended to have .toString(['utf8'|'hex'|'base64'])
 function SeaArray() {}
 Object.assign(SeaArray, { from: Array.from })
@@ -24,7 +26,12 @@ SeaArray.prototype.toString = function(enc: string, start: number, end: number) 
     return res
   }
   if (enc === 'base64') {
-    return btoa(this)
+    if (typeof btoa !== 'undefined' && btoa) {
+      return btoa(this)
+    }
+    {
+      return base64.btoa(this)
+    }
   }
 }
 

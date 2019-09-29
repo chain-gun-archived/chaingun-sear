@@ -20,6 +20,24 @@ function importKey(pub: string) {
   return promise
 }
 
+export async function verifyHashSignature(
+  hash: string,
+  signature: string,
+  pub: string,
+  opt = DEFAULT_OPTS
+) {
+  const encoding = opt.encode || DEFAULT_OPTS.encode
+  const key = await importKey(pub)
+  const buf = Buffer.from(signature, encoding)
+  const sig = new Uint8Array(buf)
+
+  if (await subtle.verify(ecdsa.sign, key, sig, new Uint8Array(Buffer.from(hash, 'hex')))) {
+    return true
+  }
+
+  return false
+}
+
 export async function verifySignature(
   text: string,
   signature: string,
@@ -29,14 +47,7 @@ export async function verifySignature(
   const encoding = opt.encode || DEFAULT_OPTS.encode
   const key = await importKey(pub)
   const hash = await sha256(typeof text === 'string' ? text : JSON.stringify(text))
-  const buf = Buffer.from(signature, encoding)
-  const sig = new Uint8Array(buf)
-
-  if (await subtle.verify(ecdsa.sign, key, sig, new Uint8Array(hash))) {
-    return true
-  }
-
-  return false
+  return verifyHashSignature(hash.toString('hex'), signature, pub, opt)
 }
 
 export async function verify(
