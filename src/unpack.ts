@@ -1,4 +1,5 @@
 import { parse, check, shuffleAttackCutoff } from './settings'
+import { pubFromSoul } from './soul'
 
 export function unpack(value: any, key: string, node: GunNode) {
   if (!value) return
@@ -23,12 +24,15 @@ export function unpack(value: any, key: string, node: GunNode) {
   if (state < shuffleAttackCutoff) return value
 }
 
-export function unpackNode(node: GunNode) {
+export function unpackNode(node: GunNode, mut: 'immutable' | 'mutable' = 'immutable') {
   if (!node) return node
 
-  const result: GunNode = {
-    _: node._
-  }
+  const result: GunNode =
+    mut === 'mutable'
+      ? node
+      : {
+          _: node._
+        }
 
   for (let key in node) {
     if (key === '_') continue
@@ -38,11 +42,13 @@ export function unpackNode(node: GunNode) {
   return result
 }
 
-export function unpackGraph(graph: GunGraphData) {
-  const unpackedGraph: GunGraphData = {}
+export function unpackGraph(graph: GunGraphData, mut: 'immutable' | 'mutable' = 'immutable') {
+  const unpackedGraph: GunGraphData = mut === 'mutable' ? graph : {}
+
   for (let soul in graph) {
     const node = graph[soul]
-    unpackedGraph[soul] = node ? unpackNode(node) : node
+    const pub = pubFromSoul(soul)
+    unpackedGraph[soul] = node && pub ? unpackNode(node, mut) : node
   }
 
   return unpackedGraph

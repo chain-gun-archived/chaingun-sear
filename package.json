@@ -1,6 +1,6 @@
 {
   "name": "@notabug/gun-sear",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "A refactor of Gun's SEA logic in TypeScript, not dependent on gun.js",
   "keywords": [],
   "main": "dist/@notabug/gun-sear.umd.js",
