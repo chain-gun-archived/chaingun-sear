@@ -19,7 +19,7 @@ export async function authenticateIdentity(
       encode: encoding
     })
   } catch (err) {
-    console.log('Attempting UTF8')
+    console.log('Attempting UTF8 login')
     const proof = await work(password, ident.auth.s, { encode: 'utf8' })
     decrypted = await decrypt(ident.auth.ek, proof, {
       encode: encoding
@@ -44,7 +44,6 @@ export async function authenticate(
 ) {
   const aliasSoul = `~@${alias}`
   const idents = await chaingun.get(aliasSoul).then()
-
   for (let soul in idents || {}) {
     if (soul === '_') continue
     let pair

@@ -61,10 +61,7 @@ export async function sign(data: string, pair: { pub: string; priv: string }, op
   const encoding = opt.encode || DEFAULT_OPTS.encode
   const checkData = (opt.check = opt.check || json)
 
-  if (
-    (check(checkData) || (checkData && checkData.s && checkData.m)) &&
-    (await verify(data, pair.pub))
-  ) {
+  if (json && ((json.s && json.m) || (json[':'] && json['~'])) && (await verify(data, pair.pub))) {
     // already signed
     const r = parse(checkData)
     if (opt.raw) return r
@@ -87,6 +84,14 @@ export async function signNodeValue(
   pair: { pub: string; priv: string },
   encoding = DEFAULT_OPTS.encode
 ) {
+  const data = node[key]
+  const json = parse(data)
+
+  if (data && json && ((json.s && json.m) || (json[':'] && json['~']))) {
+    // already signed
+    return json
+  }
+
   const hash = await hashNodeKey(node, key)
   const sig = await signHash(hash, pair)
   return {
@@ -103,8 +108,15 @@ export async function signNode(
   const signedNode: GunNode = {
     _: node._
   }
+  const soul = node._ && node._['#']
+
   for (let key in node) {
     if (key === '_') continue
+    if (key === 'pub' /*|| key === "alias"*/ && soul === `~${pair.pub}`) {
+      // Special case
+      signedNode[key] = node[key]
+      continue
+    }
     signedNode[key] = JSON.stringify(await signNodeValue(node, key, pair, encoding))
   }
   return signedNode

@@ -22,7 +22,8 @@ export async function createUser(chaingun: any, alias: string, password: string)
   const data = {
     alias,
     epub,
-    auth
+    auth,
+    pub
   }
 
   const now = new Date().getTime()
@@ -46,11 +47,7 @@ export async function createUser(chaingun: any, alias: string, password: string)
     { pub, priv }
   )
 
-  graph[pubSoul]!['pub'] = pub
-  graph[pubSoul]!['_']['>']['pub'] = now
-
-  // TODO: clean this up
-  chaingun.get(aliasSoul).put(graph)
+  await new Promise(ok => chaingun.get(aliasSoul).put(graph, ok))
 
   return {
     ...data,
