@@ -26,12 +26,7 @@ SeaArray.prototype.toString = function(enc: string, start: number, end: number) 
     return res
   }
   if (enc === 'base64') {
-    if (typeof btoa !== 'undefined' && btoa) {
-      return btoa(this)
-    }
-    {
-      return base64.btoa(this)
-    }
+    return base64.btoa(this)
   }
 }
 

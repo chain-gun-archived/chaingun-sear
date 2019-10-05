@@ -39,7 +39,7 @@ Object.assign(SafeBuffer, {
         }
         buf = SeaArray.from(words)
       } else if (enc === 'base64') {
-        const dec = typeof atob !== 'undefined' && atob ? atob(input) : base64.atob(input)
+        const dec = base64.atob(input)
         const length = dec.length
         const bytes = new Uint8Array(length)
         for (let i = 0; i < length; i++) {

@@ -11,10 +11,20 @@ export async function authenticateIdentity(
 ) {
   const ident = await chaingun.get(soul).then()
   if (!ident || !ident.auth) return
-  const proof = await work(password, ident.auth.s, { encode: encoding })
-  const decrypted: any = await decrypt(ident.auth.ek, proof, {
-    encode: encoding
-  })
+
+  let decrypted: any
+  try {
+    const proof = await work(password, ident.auth.s, { encode: encoding })
+    decrypted = await decrypt(ident.auth.ek, proof, {
+      encode: encoding
+    })
+  } catch (err) {
+    console.log('Attempting UTF8')
+    const proof = await work(password, ident.auth.s, { encode: 'utf8' })
+    decrypted = await decrypt(ident.auth.ek, proof, {
+      encode: encoding
+    })
+  }
 
   if (!decrypted) return
   return {
@@ -42,11 +52,6 @@ export async function authenticate(
       pair = await authenticateIdentity(chaingun, soul, password)
     } catch (e) {
       console.warn(e.stack || e)
-      try {
-        pair = await authenticateIdentity(chaingun, soul, password, 'utf8')
-      } catch (e) {
-        console.warn(e.stack || e)
-      }
     }
     if (pair) return pair
   }
