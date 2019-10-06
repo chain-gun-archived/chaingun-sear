@@ -1,6 +1,8 @@
-import { parse, check, jwk, ecdsa } from './settings'
+import { parse, jwk, ecdsa } from './settings'
 import { sha256 } from './sha256'
-import { subtle, Buffer } from './shims'
+import { crypto } from './shims'
+
+import { Buffer } from './shims'
 import { verify } from './verify'
 import { pubFromSoul } from './soul'
 
@@ -45,8 +47,12 @@ export async function signHash(
 ) {
   const { pub, priv } = pair
   const token = jwk(pub, priv)
-  const signKey = await subtle.importKey('jwk', token, ecdsa.pair, false, ['sign'])
-  const sig = await subtle.sign(ecdsa.sign, signKey, new Uint8Array(Buffer.from(hash, 'hex')))
+  const signKey = await crypto.subtle.importKey('jwk', token, ecdsa.pair, false, ['sign'])
+  const sig = await crypto.subtle.sign(
+    ecdsa.sign,
+    signKey,
+    new Uint8Array(Buffer.from(hash, 'hex'))
+  )
   try {
     const res = Buffer.from(sig, 'binary').toString(encoding)
     return res

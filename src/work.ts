@@ -1,27 +1,31 @@
 import { pbkdf2 } from './settings'
-import { subtle, TextEncoder, Buffer } from './shims'
+import { TextEncoder, Buffer, crypto } from './shims'
 
 const DEFAULT_OPTS = {
   name: 'PBKDF2',
   encode: 'base64',
   hash: pbkdf2.hash
-} as {
-  name?: string
-  iterations?: number
-  hash?: string
-  encode?: string
-  length?: number
 }
 
-export async function work(data: string, salt: string, opt = DEFAULT_OPTS) {
-  var key = await subtle.importKey(
+export async function work(
+  data: string,
+  salt: string,
+  opt: {
+    name?: string
+    iterations?: number
+    hash?: { name: string }
+    encode?: string
+    length?: number
+  } = DEFAULT_OPTS
+) {
+  const key = await crypto.subtle.importKey(
     'raw',
     new TextEncoder().encode(data),
-    { name: opt.name || DEFAULT_OPTS.name },
+    { name: opt.name || DEFAULT_OPTS.name || '' },
     false,
     ['deriveBits']
   )
-  var work = await subtle.deriveBits(
+  const work = await crypto.subtle.deriveBits(
     {
       name: opt.name || 'PBKDF2',
       iterations: opt.iterations || pbkdf2.iter,

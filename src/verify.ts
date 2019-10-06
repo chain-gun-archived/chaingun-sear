@@ -1,5 +1,5 @@
 import { parse, ecdsa, jwk } from './settings'
-import { subtle } from './shims'
+import { crypto } from './shims'
 import { sha256 } from './sha256'
 
 const DEFAULT_OPTS = {
@@ -16,7 +16,7 @@ const DEFAULT_OPTS = {
 
 function importKey(pub: string) {
   const token = jwk(pub)
-  const promise = subtle.importKey('jwk', token, ecdsa.pair, false, ['verify'])
+  const promise = crypto.subtle.importKey('jwk', token, ecdsa.pair, false, ['verify'])
   return promise
 }
 
@@ -31,7 +31,7 @@ export async function verifyHashSignature(
   const buf = Buffer.from(signature, encoding)
   const sig = new Uint8Array(buf)
 
-  if (await subtle.verify(ecdsa.sign, key, sig, new Uint8Array(Buffer.from(hash, 'hex')))) {
+  if (await crypto.subtle.verify(ecdsa.sign, key, sig, new Uint8Array(Buffer.from(hash, 'hex')))) {
     return true
   }
 

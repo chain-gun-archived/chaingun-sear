@@ -1,6 +1,6 @@
 import { parse } from './settings'
 import { importAesKey } from './importAesKey'
-import { subtle, Buffer, TextDecoder } from './shims'
+import { Buffer, TextDecoder, crypto } from './shims'
 
 const DEFAULT_OPTS = {
   name: 'AES-GCM',
@@ -19,10 +19,11 @@ export async function decrypt(data: string, key: string, opt = DEFAULT_OPTS): Pr
     const aeskey = await importAesKey(key, Buffer.from(json.s, encoding), opt)
     const encrypted = new Uint8Array(Buffer.from(json.ct, encoding))
     const iv = new Uint8Array(Buffer.from(json.iv, encoding))
-    const ct = await subtle.decrypt(
+    const ct = await crypto.subtle.decrypt(
       {
-        name: opt.name || DEFAULT_OPTS.name,
-        iv
+        name: opt.name || DEFAULT_OPTS.name || 'AES-GCM',
+        iv,
+        tagLength: 128
       },
       aeskey,
       encrypted

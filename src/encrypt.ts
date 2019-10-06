@@ -1,4 +1,4 @@
-import { subtle, random, Buffer, TextEncoder } from './shims'
+import { random, crypto, Buffer, TextEncoder } from './shims'
 import { importAesKey } from './importAesKey'
 
 const DEFAULT_OPTS = {
@@ -13,9 +13,9 @@ const DEFAULT_OPTS = {
 export async function encrypt(msg: string, key: string, opt = DEFAULT_OPTS) {
   const rand = { s: random(9), iv: random(15) } // consider making this 9 and 15 or 18 or 12 to reduce == padding.
 
-  const ct = await subtle.encrypt(
+  const ct = await crypto.subtle.encrypt(
     {
-      name: opt.name || DEFAULT_OPTS.name,
+      name: opt.name || DEFAULT_OPTS.name || 'AES-GCM',
       iv: new Uint8Array(rand.iv)
     },
     await importAesKey(key, rand.s, opt),

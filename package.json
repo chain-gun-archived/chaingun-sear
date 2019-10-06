@@ -1,6 +1,6 @@
 {
   "name": "@notabug/gun-sear",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "description": "A refactor of Gun's SEA logic in TypeScript, not dependent on gun.js",
   "keywords": [],
   "main": "dist/@notabug/gun-sear.umd.js",
@@ -118,8 +118,8 @@
     "typescript": "^3.0.3"
   },
   "dependencies": {
-    "@peculiar/webcrypto": "^1.0.19",
     "@types/window-or-global": "^1.0.0",
+    "isomorphic-webcrypto": "^2.3.2",
     "text-encoding": "^0.7.0",
     "window-or-global": "^1.0.1"
   }
