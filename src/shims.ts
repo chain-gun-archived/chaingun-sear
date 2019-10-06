@@ -14,7 +14,7 @@ const api: any = {
   TextDecoder: root && root.TextDecoder
 }
 api.random = (len: number) =>
-  api.Buffer.from(isocrypto.getRandomValues(new Uint8Array(api.Buffer.alloc(len))))
+  api.Buffer.from(crypto.getRandomValues(new Uint8Array(api.Buffer.alloc(len))))
 // api.random = (len: number) => api.Buffer.from(api.crypto.randomBytes(len))
 
 if (!api.TextEncoder) {
