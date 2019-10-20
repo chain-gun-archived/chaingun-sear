@@ -1,3 +1,5 @@
+// tslint:disable
+
 import { base64 } from './base64'
 
 // This is Array extended to have .toString(['utf8'|'hex'|'base64'])

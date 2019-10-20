@@ -1,18 +1,22 @@
-import { parse } from './settings'
 import { importAesKey } from './importAesKey'
-import { Buffer, TextDecoder, crypto } from './shims'
+import { parse } from './settings'
+import { Buffer, crypto, TextDecoder } from './shims'
 
-const DEFAULT_OPTS = {
-  name: 'AES-GCM',
-  encode: 'base64'
-} as {
-  name?: string
-  encode?: string
-  fallback?: string
+const DEFAULT_OPTS: {
+  readonly name?: string
+  readonly encode?: string
+  readonly fallback?: string
+} = {
+  encode: 'base64',
+  name: 'AES-GCM'
 }
 
-export async function decrypt(data: string, key: string, opt = DEFAULT_OPTS): Promise<GunValue> {
-  const json = parse(data)
+export async function decrypt(
+  data: string,
+  key: string,
+  opt = DEFAULT_OPTS
+): Promise<GunValue> {
+  const json: any = parse(data)
   const encoding = opt.encode || DEFAULT_OPTS.encode
 
   try {
@@ -21,8 +25,8 @@ export async function decrypt(data: string, key: string, opt = DEFAULT_OPTS): Pr
     const iv = new Uint8Array(Buffer.from(json.iv, encoding))
     const ct = await crypto.subtle.decrypt(
       {
-        name: opt.name || DEFAULT_OPTS.name || 'AES-GCM',
         iv,
+        name: opt.name || DEFAULT_OPTS.name || 'AES-GCM',
         tagLength: 128
       },
       aeskey,
@@ -30,8 +34,12 @@ export async function decrypt(data: string, key: string, opt = DEFAULT_OPTS): Pr
     )
     return parse(new TextDecoder('utf8').decode(ct))
   } catch (e) {
+    // tslint:disable-next-line: no-console
     console.warn('decrypt error', e, e.stack || e)
-    if (!opt.fallback || encoding === opt.fallback) throw 'Could not decrypt'
+
+    if (!opt.fallback || encoding === opt.fallback) {
+      throw new Error('Could not decrypt')
+    }
     return decrypt(data, key, { ...opt, encode: opt.fallback })
   }
 }

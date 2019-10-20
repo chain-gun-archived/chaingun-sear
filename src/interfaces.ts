@@ -1,29 +1,32 @@
 interface GunNodeState {
-  [key: string]: number
+  readonly [key: string]: number
+}
+
+interface GunNodeMeta {
+  readonly '#': string
+  readonly '>': GunNodeState
 }
 
 interface GunNode {
-  _: {
-    '#': string
-    '>': GunNodeState
-  }
-  [key: string]: GunValue
+  readonly _: GunNodeMeta
+  // tslint:disable-next-line: no-mixed-interface
+  readonly [key: string]: GunValue
 }
 
 interface GunGraphData {
-  [key: string]: GunNode | undefined
+  readonly [key: string]: GunNode | undefined
 }
 
 interface GunMsg {
-  '#'?: string
-  '##'?: string | number
+  readonly '#'?: string
+  readonly '##'?: string | number
 
-  get?: {
-    '#': string
+  readonly get?: {
+    readonly '#': string
   }
 
-  put?: {
-    [soul: string]: GunNode
+  readonly put?: {
+    readonly [soul: string]: GunNode
   }
 }
 

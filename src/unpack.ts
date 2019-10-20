@@ -1,15 +1,25 @@
-import { parse, check, shuffleAttackCutoff } from './settings'
+import { check, parse, shuffleAttackCutoff } from './settings'
 import { pubFromSoul } from './soul'
 
-export function unpack(value: any, key: string, node: GunNode) {
-  if (!value) return
+export function unpack(value: any, key: string, node: GunNode): any {
+  if (!value) {
+    return
+  }
   if (typeof value === 'object' && ':' in value) {
     const val = value[':']
-    if (typeof val !== 'undefined') return val
+    if (typeof val !== 'undefined') {
+      return val
+    }
   }
-  if (!key || !node) return
-  if (value === node[key]) return value
-  if (!check(node[key])) return value
+  if (!key || !node) {
+    return
+  }
+  if (value === node[key]) {
+    return value
+  }
+  if (!check(node[key])) {
+    return value
+  }
   const soul = node && node._ && node._['#']
   const state = node && node._ && node._['>'] && node._['>'][key]
   if (
@@ -21,11 +31,18 @@ export function unpack(value: any, key: string, node: GunNode) {
   ) {
     return value[2]
   }
-  if (state < shuffleAttackCutoff) return value
+  if (state < shuffleAttackCutoff) {
+    return value
+  }
 }
 
-export function unpackNode(node: GunNode, mut: 'immutable' | 'mutable' = 'immutable') {
-  if (!node) return node
+export function unpackNode(
+  node: GunNode,
+  mut: 'immutable' | 'mutable' = 'immutable'
+): GunNode {
+  if (!node) {
+    return node
+  }
 
   const result: GunNode =
     mut === 'mutable'
@@ -34,20 +51,34 @@ export function unpackNode(node: GunNode, mut: 'immutable' | 'mutable' = 'immuta
           _: node._
         }
 
-  for (let key in node) {
-    if (key === '_') continue
+  for (const key in node) {
+    if (key === '_') {
+      continue
+    }
+    // @ts-ignore
+    // tslint:disable-next-line: no-object-mutation
     result[key] = unpack(parse(node[key]), key, node)
   }
 
   return result
 }
 
-export function unpackGraph(graph: GunGraphData, mut: 'immutable' | 'mutable' = 'immutable') {
+export function unpackGraph(
+  graph: GunGraphData,
+  mut: 'immutable' | 'mutable' = 'immutable'
+): GunGraphData {
   const unpackedGraph: GunGraphData = mut === 'mutable' ? graph : {}
 
-  for (let soul in graph) {
+  for (const soul in graph) {
+    if (!soul) {
+      continue
+    }
+
     const node = graph[soul]
     const pub = pubFromSoul(soul)
+
+    // @ts-ignore
+    // tslint:disable-next-line: no-object-mutation
     unpackedGraph[soul] = node && pub ? unpackNode(node, mut) : node
   }
 

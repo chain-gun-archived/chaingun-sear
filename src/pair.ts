@@ -1,8 +1,16 @@
-import { ecdsa, ecdh } from './settings'
+import { ecdh, ecdsa } from './settings'
 import { crypto } from './shims'
 
-export async function pair(opt?: any) {
-  const signKeys = await crypto.subtle.generateKey(ecdsa.pair, true, ['sign', 'verify'])
+export async function pair(_opt?: any): Promise<{
+  readonly epriv: string
+  readonly epub: string
+  readonly priv: string
+  readonly pub: string
+}> {
+  const signKeys = await crypto.subtle.generateKey(ecdsa.pair, true, [
+    'sign',
+    'verify'
+  ])
   const signPub = await crypto.subtle.exportKey('jwk', signKeys.publicKey)
   const sa = {
     priv: (await crypto.subtle.exportKey('jwk', signKeys.privateKey)).d,
@@ -17,9 +25,9 @@ export async function pair(opt?: any) {
   }
 
   return {
-    pub: sa.pub,
-    priv: sa.priv || '',
+    epriv: dh.epriv || '',
     epub: dh.epub,
-    epriv: dh.epriv || ''
+    priv: sa.priv || '',
+    pub: sa.pub
   }
 }

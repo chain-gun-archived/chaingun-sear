@@ -1,3 +1,3 @@
-# gunDB SEA Revisited
+# @chaingun/sear
 
-A refactor of Gun's SEA logic in typescript, not dependent on gun.js
+A refactor of Gun's SEA logic in TypeScript, not dependent on gun.js

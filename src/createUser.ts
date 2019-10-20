@@ -1,10 +1,22 @@
-import { pseudoRandomText } from './pseudoRandomText'
-import { work } from './work'
-import { pair as createPair } from './pair'
 import { encrypt } from './encrypt'
+import { pair as createPair } from './pair'
+import { pseudoRandomText } from './pseudoRandomText'
 import { signGraph } from './sign'
+import { work } from './work'
 
-export async function createUser(chaingun: any, alias: string, password: string) {
+// TODO: refactor to not require chaingun
+export async function createUser(
+  chaingun: any,
+  alias: string,
+  password: string
+): Promise<{
+  readonly alias: string
+  readonly auth: string
+  readonly epub: string
+  readonly pub: string
+  readonly epriv: string
+  readonly priv: string
+}> {
   const aliasSoul = `~@${alias}`
 
   // "pseudo-randomly create a salt, then use PBKDF2 function to extend the password with it."
@@ -21,8 +33,8 @@ export async function createUser(chaingun: any, alias: string, password: string)
   const auth = JSON.stringify({ ek, s: salt })
   const data = {
     alias,
-    epub,
     auth,
+    epub,
     pub
   }
 
@@ -34,11 +46,13 @@ export async function createUser(chaingun: any, alias: string, password: string)
         _: {
           '#': pubSoul,
           '>': Object.keys(data).reduce(
-            (state, key) => {
+            // tslint:disable-next-line: readonly-keyword
+            (state: { [key: string]: number }, key) => {
+              // tslint:disable-next-line: no-object-mutation
               state[key] = now
               return state
             },
-            {} as { [key: string]: number }
+            {}
           )
         },
         ...data
@@ -51,8 +65,8 @@ export async function createUser(chaingun: any, alias: string, password: string)
 
   return {
     ...data,
-    pub,
+    epriv,
     priv,
-    epriv
+    pub
   }
 }

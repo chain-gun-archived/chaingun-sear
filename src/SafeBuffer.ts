@@ -1,3 +1,5 @@
+// tslint:disable
+
 // This is Buffer implementation used in SEA. Functionality is mostly
 // compatible with NodeJS 'safe-buffer' and is used for encoding conversions
 // between binary and 'hex' | 'utf8' | 'base64'
@@ -53,7 +55,6 @@ Object.assign(SafeBuffer, {
       }
       return buf
     }
-    const byteLength = input.byteLength // what is going on here? FOR MARTTI
     const length = input.byteLength ? input.byteLength : input.length
     if (length) {
       let buf
@@ -65,7 +66,9 @@ Object.assign(SafeBuffer, {
   },
   // This is 'safe-buffer.alloc' sans encoding support
   alloc(length: number, fill = 0 /*, enc */) {
-    return SeaArray.from(new Uint8Array(Array.from({ length: length }, () => fill)))
+    return SeaArray.from(
+      new Uint8Array(Array.from({ length: length }, () => fill))
+    )
   },
   // This is normal UNSAFE 'buffer.alloc' or 'new Buffer(length)' - don't use!
   allocUnsafe(length: number) {
@@ -79,7 +82,9 @@ Object.assign(SafeBuffer, {
         'First argument must be Array containing ArrayBuffer or Uint8Array instances.'
       )
     }
-    return SeaArray.from(arr.reduce((ret, item) => ret.concat(Array.from(item)), []))
+    return SeaArray.from(
+      arr.reduce((ret, item) => ret.concat(Array.from(item)), [])
+    )
   }
 })
 SafeBuffer.prototype.from = (<any>SafeBuffer).from
