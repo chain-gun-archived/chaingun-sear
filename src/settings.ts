@@ -62,6 +62,6 @@ export function parse(t: any): any {
     }
     return yes ? JSON.parse(t) : t
     // tslint:disable-next-line: no-empty
-  } catch {}
+  } catch (_e) {}
   return t
 }
