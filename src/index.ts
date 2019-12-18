@@ -2,7 +2,7 @@ import * as _shims from './shims'
 
 export * from './settings'
 export * from './unpack'
-export { authenticate } from './authenticate'
+export { authenticate, authenticateAccount } from './authenticate'
 export { createUser } from './createUser'
 export { decrypt } from './decrypt'
 export { encrypt } from './encrypt'

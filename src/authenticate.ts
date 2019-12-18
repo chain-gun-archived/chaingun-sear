@@ -3,9 +3,8 @@ import { work } from './work'
 
 const DEFAULT_OPTS = {}
 
-export async function authenticateIdentity(
-  chaingun: any,
-  soul: string,
+export async function authenticateAccount(
+  ident: any,
   password: string,
   encoding = 'base64'
 ): Promise<
@@ -18,7 +17,6 @@ export async function authenticateIdentity(
       readonly pub: string
     }
 > {
-  const ident = await chaingun.get(soul).then()
   if (!ident || !ident.auth) {
     return
   }
@@ -48,6 +46,25 @@ export async function authenticateIdentity(
     priv: decrypted.priv as string,
     pub: ident.pub as string
   }
+}
+
+export async function authenticateIdentity(
+  chaingun: any,
+  soul: string,
+  password: string,
+  encoding = 'base64'
+): Promise<
+  | undefined
+  | {
+      readonly alias: string
+      readonly epriv: string
+      readonly epub: string
+      readonly priv: string
+      readonly pub: string
+    }
+> {
+  const ident = await chaingun.get(soul).then()
+  return authenticateAccount(ident, password, encoding)
 }
 
 export async function authenticate(
