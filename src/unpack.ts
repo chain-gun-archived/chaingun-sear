@@ -1,16 +1,28 @@
 import { check, parse, shuffleAttackCutoff } from './settings'
 import { pubFromSoul } from './soul'
 
-export function unpack(value: any, key: string, node: GunNode): any {
+export function unpack(passedValue: any, key: string, node: GunNode): any {
+  // tslint:disable-next-line: no-let
+  let value = passedValue
+
   if (!value) {
     return
   }
+
   if (typeof value === 'object' && ':' in value) {
     const val = value[':']
     if (typeof val !== 'undefined') {
       return val
     }
   }
+
+  if (typeof value === 'object' && 'm' in value) {
+    const val = value.m
+    if (typeof val !== 'undefined') {
+      value = parse(val)
+    }
+  }
+
   if (!key || !node) {
     return
   }
